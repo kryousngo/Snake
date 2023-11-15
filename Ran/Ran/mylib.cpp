@@ -110,7 +110,7 @@ int whereY()
 }
 
 // Xóa con trỏ nháy
-void noCursorType()
+ void noCursorType()
 {
 	CONSOLE_CURSOR_INFO info;
 	info.bVisible = FALSE;
