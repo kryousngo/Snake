@@ -1,0 +1,6 @@
+﻿  main.cpp
+C:\Users\admin\Downloads\C program\Ran\Ran\snake.h(19,24): warning C4309: 'initializing': truncation of constant value
+C:\Users\admin\Downloads\C program\Ran\Ran\main.cpp(13,13): warning C4553: '==': result of expression not used; did you intend '='?
+C:\Users\admin\Downloads\C program\Ran\Ran\main.cpp(17,13): warning C4553: '==': result of expression not used; did you intend '='?
+C:\Users\admin\Downloads\C program\Ran\Ran\main.cpp(21,13): warning C4553: '==': result of expression not used; did you intend '='?
+  Ran.vcxproj -> C:\Users\admin\Downloads\C program\Ran\x64\Debug\Ran.exe
