@@ -4,7 +4,7 @@
 #include <string>
 
 using namespace std;
-
+//Nguyệt
 const int WINDOW_TOP = 5;
 const int WINDOW_BOTTOM = 35;
 const int WINDOW_LEFT = 1;
@@ -111,8 +111,6 @@ int speed = 1;
 DIRECTION direction = RIGHT;
 Snake ran;
 Point food;
-
-//Hàm nhập thông tin người chơi
 
 int main()
 {
