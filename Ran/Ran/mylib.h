@@ -20,11 +20,6 @@
 #define YELLOW_COLOR		14
 #define WHITE_COLOR			15
 
-
-#define KEY_UP		1072
-#define KEY_DOWN	1080
-#define KEY_LEFT	1075
-#define KEY_RIGHT	1077
 #define KEY_NONE	-1
 
 // Lấy nút bàn phím do người dùng bấm
