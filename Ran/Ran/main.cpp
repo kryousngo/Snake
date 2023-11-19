@@ -112,6 +112,139 @@ DIRECTION direction = RIGHT;
 Snake ran;
 Point food;
 
+//Trần
+
+//Hàm hiển thị tên game
+void showNameGame()
+{
+	setTextColor(WHITE_COLOR);
+	gotoXY(1, 0);
+	for (int i = WINDOW_LEFT; i <= WINDOW_RIGHT; i++)
+		cout << char(220);
+
+	for (int i = 1; i < WINDOW_TOP; i++)
+	{
+		gotoXY(1, i); cout << char(221);
+	}
+	for (int i = 1; i < WINDOW_TOP; i++)
+	{
+		gotoXY(WINDOW_RIGHT, i); cout << char(222);
+	}
+	gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 30, 1);  cout << " ___     _     _        ____     _     _        _    _  ____";
+	gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 30, 2); cout << "|   \\   / \\   | \\  |   |        / \\   | \\  |   | \\  / ||    ||";
+	gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 30, 3); cout << "|___/  /___\\  |  \\ |    ----   /___\\  |  \\ |   |  \\/  ||    ||";
+	gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 30, 4); cout << "|   \\ /     \\ |   \\|    ____| /     \\ |   \\|   |      ||____||";
+}
+
+//Hàm khởi tạo kích thước cửa sổ console
+void setWindowGame()
+{
+	gotoXY(WINDOW_LEFT, WINDOW_TOP);
+	for (int i = 0; i < WINDOW_RIGHT; i++)
+	{
+		cout << char(220);
+	}
+	for (int i = 0; i < WINDOW_BOTTOM - 5; i++)
+	{
+		gotoXY(WINDOW_LEFT, WINDOW_TOP + i);
+		cout << char(221) << endl;
+	}
+	gotoXY(WINDOW_LEFT, WINDOW_BOTTOM);
+	for (int i = 0; i < WINDOW_RIGHT; i++)
+	{
+		cout << char(223);
+	}
+	for (int i = 0; i < WINDOW_BOTTOM - 5; i++)
+	{
+		gotoXY(WINDOW_RIGHT, WINDOW_TOP + i);
+		cout << char(222) << endl;
+	}
+
+}
+//Hàm kiểm tra rắn có chạm tường hay tự cắn không
+bool checkGame()
+{
+	//Kiểm tra chạm biên
+	if (ran.snake[0].y == WINDOW_TOP)
+		return true;
+	if (ran.snake[0].y == WINDOW_BOTTOM)
+		return true;
+	if (ran.snake[0].x == WINDOW_LEFT)
+		return true;
+	if (ran.snake[0].x == WINDOW_RIGHT)
+		return true;
+	for (int i = 3; i < ran.length; i++)
+		if ((ran.snake[0].x == ran.snake[i].x) && (ran.snake[0].y == ran.snake[i].y))
+			return true;
+	return false;
+}
+
+//Hàm kết thúc game
+void gameOver()
+{
+	showNameGame();
+	int key = inputKey();
+	while (key != 13)
+	{
+		key = inputKey();
+		setTextColor(CYAN_COLOR);
+		gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 15, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 5); cout << "---------------------------------";
+		gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 15, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 4); cout << "|          YOUR SCORE           |";
+		gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 15, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 3); cout << "---------------------------------";
+		gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 15, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 2); cout << "---------------------------------";
+		gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 15, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 1); cout << "|               " << score;
+		gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 + 17, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 1); cout << "|";
+		gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 15, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 0); cout << "---------------------------------";
+		Sleep(100);
+		setTextColor(YELLOW_COLOR);
+		gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 15, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 5); cout << "---------------------------------";
+		gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 15, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 4); cout << "|          YOUR SCORE           |";
+		gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 15, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 3); cout << "---------------------------------";
+		gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 15, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 2); cout << "---------------------------------";
+		gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 15, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 1); cout << "|               " << score;
+		gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 + 17, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 1); cout << "|";
+		gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 15, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 0); cout << "---------------------------------";
+		Sleep(100);
+
+
+	}
+	setTextColor(WHITE_COLOR);
+	clrscr();
+	setWindowGame();
+	showNameGame();
+	setTextColor(YELLOW_COLOR);
+	key = 11;
+	while (key != 13)
+	{
+		key = inputKey();
+		setTextColor(YELLOW_COLOR);
+		gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 30, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 2); cout << " _____      __     _    _  _____   _____           _____  ____" << endl;
+		gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 30, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 1); cout << "|     |    /  \\   | \\  / ||       |     |\\       /|      |    \\" << endl;
+		gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 30, (WINDOW_BOTTOM + WINDOW_TOP) / 2); cout << "|   ____  /____\\  |  \\/  ||_____  |     | \\     / |_____ |  __/" << endl;
+		gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 30, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 1); cout << "|     |  /      \\ |      ||       |     |  \\   /  |      |  \\" << endl;
+		gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 30, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 2); cout << "|_____| /        \\|      ||_____  |_____|   \\_/   |_____ |   \\" << endl;
+		Sleep(100);
+		setTextColor(CYAN_COLOR);
+		gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 30, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 2); cout << " _____      __     _    _  _____   _____           _____  ____" << endl;
+		gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 30, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 1); cout << "|     |    /  \\   | \\  / ||       |     |\\       /|      |    \\" << endl;
+		gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 30, (WINDOW_BOTTOM + WINDOW_TOP) / 2); cout << "|   ____  /____\\  |  \\/  ||_____  |     | \\     / |_____ |  __/" << endl;
+		gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 30, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 1); cout << "|     |  /      \\ |      ||       |     |  \\   /  |      |  \\" << endl;
+		gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 30, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 2); cout << "|_____| /        \\|      ||_____  |_____|   \\_/   |_____ |   \\" << endl;
+		Sleep(100);
+	}
+	key = KEY_NONE;
+	setTextColor(WHITE_COLOR);
+	clrscr();
+	setWindowGame();
+	showNameGame();
+	showHighScore();
+	while (key != 13)
+	{
+		key = inputKey();
+	}
+	clrscr();
+}
+
 int main()
 {
 
