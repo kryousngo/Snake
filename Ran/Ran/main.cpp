@@ -111,6 +111,112 @@ int speed = 1;
 DIRECTION direction = RIGHT;
 Snake ran;
 Point food;
+//Tiểu Bảo
+
+//Đổi chỗ và sắp xếp bảng xếp hạng
+void swap(HighScore& a, HighScore& b)
+{
+
+	HighScore temp;
+	temp.name = b.name;
+	b.name = a.name;
+	a.name = temp.name;
+
+	temp.score = b.score;
+	b.score = a.score;
+	a.score = temp.score;
+}
+void selectionSort()
+{
+
+	for (int i = 0; i < table.amount - 1; i++)
+	{
+		for (int j = i + 1; j < table.amount; j++)
+			if (table.people[j].score > table.people[i].score)
+			{
+				swap(table.people[i], table.people[j]);
+			}
+	}
+}
+
+//Lấy thông tin bằng xếp hạng
+void getHighScore()
+{
+	ifstream inFile;
+	table.amount = 0;
+	inFile.open("highscore.txt");
+	if (inFile)
+	{
+
+		while (!inFile.eof())
+		{
+			inFile >> table.people[table.amount].name;
+			inFile >> table.people[table.amount].score;
+			table.amount++;
+		}
+		table.amount--;
+	}
+}
+
+//Thay đổi bảng xếp hạng
+void changeHighScore()
+{
+	ofstream outFile;
+	outFile.open("highscore.txt", ios::trunc);
+	if (score != 0)
+	{
+		if (table.amount == 0)
+		{
+			table.amount = 1;
+			table.people[0].name = player;
+			table.people[0].score = score;
+		}
+		else if (table.amount < 5)
+		{
+			table.people[table.amount].name = player;
+			table.people[table.amount].score = score;
+			table.amount++;
+			selectionSort();
+		}
+		else if (table.amount == 5)
+		{
+			int temp;
+			if (score > table.people[4].score)
+			{
+				table.people[4].name = player;
+				table.people[4].score = score;
+				selectionSort();
+			}
+
+		}
+	}
+	for (int i = 0; i < table.amount; i++)
+	{
+		outFile << table.people[i].name << "\t" << table.people[i].score << endl;
+	}
+
+	outFile.close();
+}
+
+//Hiển thị bảng xếp hạng
+void showHighScore()
+{
+	changeHighScore();
+	gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 10); cout << "---------------------------";
+	gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 9);  cout << "|        HIGH SCORE       |";
+	gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 8);  cout << "---------------------------";
+
+	for (int i = 0; i < table.amount; i++)
+	{
+		gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 7 + i * 3);     cout << "---------------------------";
+		gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 6 + i * 3); cout << "|  " << table.people[i].name << "\t \t" << table.people[i].score;
+		gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 + 12, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 6 + i * 3); cout << "|";
+		gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 5 + i * 3); cout << "---------------------------"; \
+	}
+	Sleep(1000);
+
+}
+
 
 //Trần
 
