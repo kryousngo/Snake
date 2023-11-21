@@ -1,10 +1,11 @@
-﻿#include "consoleWindow.h"
+#include "mylib.h"
+#include "consoleWindow.h"
 #include <iostream>
 #include <fstream>
 #include <string>
 
 using namespace std;
-//Nguyệt
+
 const int WINDOW_TOP = 5;
 const int WINDOW_BOTTOM = 35;
 const int WINDOW_LEFT = 1;
@@ -111,7 +112,35 @@ int speed = 1;
 DIRECTION direction = RIGHT;
 Snake ran;
 Point food;
-//Tiểu Bảo
+
+//Hàm nhập thông tin người chơi
+void inputPlayer()
+{
+	gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 17, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 3); cout << "----------------------------------";
+	gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 17, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 2); cout << "|         INPUT YOU NAME         |";
+	gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 17, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 1); cout << "----------------------------------";
+	gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 17, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 0); cout << "----------------------------------";
+	gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 17, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 2); cout << "----------------------------------";
+	gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 17, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 1); cout << "|                                |";
+	gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 3, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 1);
+	cin >> player;
+}
+
+//Hiển thị tên người chơi
+void showPlayer()
+{
+	setTextColor(YELLOW_COLOR);
+	gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 6, 1);
+	for (int i = 0; i < 15; i++)
+		cout << char(205);
+	gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 6 + 7 - player.length() / 2, 2);
+	cout << player;
+	gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 6, 3);
+	for (int i = 0; i < 15; i++)
+		cout << char(205);
+	setTextColor(WHITE_COLOR);
+}
+
 
 //Đổi chỗ và sắp xếp bảng xếp hạng
 void swap(HighScore& a, HighScore& b)
@@ -147,7 +176,7 @@ void getHighScore()
 	inFile.open("highscore.txt");
 	if (inFile)
 	{
-
+		
 		while (!inFile.eof())
 		{
 			inFile >> table.people[table.amount].name;
@@ -162,7 +191,7 @@ void getHighScore()
 void changeHighScore()
 {
 	ofstream outFile;
-	outFile.open("highscore.txt", ios::trunc);
+	outFile.open("highscore.txt",ios::trunc);
 	if (score != 0)
 	{
 		if (table.amount == 0)
@@ -217,9 +246,6 @@ void showHighScore()
 
 }
 
-
-//Trần
-
 //Hàm hiển thị tên game
 void showNameGame()
 {
@@ -267,6 +293,7 @@ void setWindowGame()
 	}
 
 }
+
 //Hàm kiểm tra rắn có chạm tường hay tự cắn không
 bool checkGame()
 {
@@ -350,7 +377,78 @@ void gameOver()
 	}
 	clrscr();
 }
-//Hàm bắt đầu lại-----Quang
+//Hàm hiển thị điểm
+void showScore()
+{
+	setTextColor(YELLOW_COLOR);
+	gotoXY(2, 1);
+	for (int i = 0; i < 15; i++)
+		cout << char(205);
+	cout << endl;
+	gotoXY(2, 2);
+	cout << "   SCORE = " << score << endl;
+	gotoXY(2, 3);
+	for (int i = 0; i < 15; i++)
+		cout << char(205);
+	cout << endl;
+	setTextColor(WHITE_COLOR);
+}
+
+//Hàm hiển thị level
+void showLevel()
+{
+	setTextColor(YELLOW_COLOR);
+	gotoXY(WINDOW_RIGHT - 15, 1);
+	for (int i = 0; i < 15; i++)
+		cout << char(205);
+	cout << endl;
+	gotoXY(WINDOW_RIGHT - 15, 2);
+	cout << "   LEVEL = " << level << endl;
+	gotoXY(WINDOW_RIGHT - 15, 3);
+	for (int i = 0; i < 15; i++)
+		cout << char(205);
+	cout << endl;
+	setTextColor(WHITE_COLOR);
+}
+
+//Hàm tạo thức ăn
+void creatFood()
+{
+	srand(time(0));
+	food.x = WINDOW_LEFT + 1 + rand() % (WINDOW_RIGHT - WINDOW_LEFT - 1);
+	food.y = WINDOW_TOP + 1 + rand() % (WINDOW_BOTTOM - WINDOW_TOP - 1);
+}
+
+//Hàm hiển thị thức ăn
+void drawFood()
+{
+	setTextColor(CYAN_COLOR);
+
+	gotoXY(food.x, food.y);
+	cout << ran.snakeType;
+	setTextColor(WHITE_COLOR);
+}
+
+//Hàm xử lý khi rắn ăn mồi
+void eatFood()
+{
+	if (ran.snake[0].x == food.x && ran.snake[0].y == food.y)
+	{
+		ran.length++;
+		creatFood();
+		drawFood();
+		score++;
+		if ((score != 0) && (score % 10 == 0))
+		{
+			level++;
+			speed *= 2;
+		}
+
+	}
+
+}
+
+//Hàm bắt đầu lại
 void restartGame()
 {
 	ran.snakeType = 254;
@@ -364,7 +462,566 @@ void restartGame()
 	speed = 1;
 	player = "";
 }
-//Hàm Hướng dẫn chơi game-----Quang
+
+//Hàm chọn hình còn rắn
+void setTypeSnake()
+{
+	int select = 1;
+	gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 10); cout << "---------------------------";
+	gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 9);  cout << "|    CHOOSE SNAKE TYPE    |";
+	gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 8);  cout << "---------------------------";
+	int key = inputKey();
+	while (key != 13)
+	{
+		while (select == 1)
+		{
+			setTextColor(RED_COLOR);
+			gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 7); cout << "---------------------------";
+			gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 6); cout << "|      HEART      " << char(3) << "       |";
+			gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 5); cout << "---------------------------";
+
+			setTextColor(WHITE_COLOR);
+			{
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 4); cout << "---------------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 3); cout << "|      DIAMOND    " << char(4) << "       |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 2); cout << "---------------------------";
+
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 1); cout << "---------------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 0); cout << "|      CLUB       " << char(5) << "       |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 1); cout << "---------------------------";
+
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 2); cout << "---------------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 3); cout << "|      SPADE      " << char(6) << "       |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 4); cout << "---------------------------";
+
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 5); cout << "---------------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 6); cout << "|      SQUARE     " << char(254) << "       |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 7); cout << "---------------------------";
+			}
+
+			key = inputKey();
+			if (key == 80)
+			{
+				select = 2;
+				break;
+			}
+			else if (key == 72)
+			{
+				select = 5;
+				break;
+			}
+			else if (key == 13)
+				break;
+		}
+		while (select == 2)
+		{
+			setTextColor(RED_COLOR);
+			gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 4); cout << "---------------------------";
+			gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 3); cout << "|      DIAMOND    " << char(4) << "       |";
+			gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 2); cout << "---------------------------";
+
+			setTextColor(WHITE_COLOR);
+			{
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 7); cout << "---------------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 6); cout << "|      HEART      " << char(3) << "       |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 5); cout << "---------------------------";
+
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 1); cout << "---------------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 0); cout << "|      CLUB       " << char(5) << "       |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 1); cout << "---------------------------";
+
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 2); cout << "---------------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 3); cout << "|      SPADE      " << char(6) << "       |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 4); cout << "---------------------------";
+
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 5); cout << "---------------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 6); cout << "|      SQUARE     " << char(254) << "       |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 7); cout << "---------------------------";
+			}
+
+			key = inputKey();
+			if (key == 80)
+			{
+				select = 3;
+				break;
+			}
+			else if (key == 72)
+			{
+				select = 1;
+				break;
+			}
+			else if (key == 13)
+				break;
+		}
+		while (select == 3)
+		{
+			setTextColor(RED_COLOR);
+			gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 1); cout << "---------------------------";
+			gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 0); cout << "|      CLUB       " << char(5) << "       |";
+			gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 1); cout << "---------------------------";
+
+			setTextColor(WHITE_COLOR);
+			{
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 7); cout << "---------------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 6); cout << "|      HEART      " << char(3) << "       |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 5); cout << "---------------------------";
+
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 4); cout << "---------------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 3); cout << "|      DIAMOND    " << char(4) << "       |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 2); cout << "---------------------------";
+
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 2); cout << "---------------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 3); cout << "|      SPADE      " << char(6) << "       |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 4); cout << "---------------------------";
+
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 5); cout << "---------------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 6); cout << "|      SQUARE     " << char(254) << "       |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 7); cout << "---------------------------";
+			}
+			key = inputKey();
+			if (key == 80)
+			{
+				select = 4;
+				break;
+			}
+			else if (key == 72)
+			{
+				select = 2;
+				break;
+			}
+			else if (key == 13)
+				break;
+		}
+		while (select == 4)
+		{
+			setTextColor(RED_COLOR);
+			gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 2); cout << "---------------------------";
+			gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 3); cout << "|      SPADE      " << char(6) << "       |";
+			gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 4); cout << "---------------------------";
+
+			setTextColor(WHITE_COLOR);
+			{
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 7); cout << "---------------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 6); cout << "|      HEART      " << char(3) << "       |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 5); cout << "---------------------------";
+
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 4); cout << "---------------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 3); cout << "|      DIAMOND    " << char(4) << "       |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 2); cout << "---------------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 1); cout << "---------------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 0); cout << "|      CLUB       " << char(5) << "       |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 1); cout << "---------------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 5); cout << "---------------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 6); cout << "|      SQUARE     " << char(254) << "       |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 7); cout << "---------------------------";
+
+
+			}
+			key = inputKey();
+			if (key == 80)
+			{
+				select = 5;
+				break;
+			}
+			else if (key == 72)
+			{
+				select = 3;
+				break;
+			}
+			else if (key == 13)
+				break;
+		}
+		while (select == 5)
+		{
+			setTextColor(RED_COLOR);
+			gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 5); cout << "---------------------------";
+			gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 6); cout << "|      SQUARE     " << char(254) << "       |";
+			gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 7); cout << "---------------------------";
+
+			setTextColor(WHITE_COLOR);
+			{
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 7); cout << "---------------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 6); cout << "|      HEART      " << char(3) << "       |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 5); cout << "---------------------------";
+
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 4); cout << "---------------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 3); cout << "|      DIAMOND    " << char(4) << "       |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 2); cout << "---------------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 1); cout << "---------------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 0); cout << "|      CLUB       " << char(5) << "       |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 1); cout << "---------------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 2); cout << "---------------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 3); cout << "|      SPADE      " << char(6) << "       |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 14, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 4); cout << "---------------------------";
+
+			}
+			key = inputKey();
+			if (key == 80)
+			{
+				select = 1;
+				break;
+			}
+			else if (key == 72)
+			{
+				select = 4;
+				break;
+			}
+			else if (key == 13)
+				break;
+		}
+
+	}
+	if (select == 1)
+		ran.setSnakeType(char(3));
+	if (select == 2)
+		ran.setSnakeType(char(4));
+	if (select == 3)
+		ran.setSnakeType(char(5));
+	if (select == 4)
+		ran.setSnakeType(char(6));
+	if (select == 5)
+		ran.setSnakeType(char(254));
+}
+
+//Hàm bắt đầu game
+int menuGame()
+{
+	int select = 1;
+	int key = inputKey();
+	while (key != 13)
+	{
+		while (select == 1)
+		{
+			setTextColor(RED_COLOR);
+			{
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 6); cout << "----------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 5); cout << "|      NEW GAME      |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 4); cout << "----------------------";
+			}
+
+			setTextColor(WHITE_COLOR);
+			{
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 3); cout << "----------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 2); cout << "|      CONTINUE      |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 1); cout << "----------------------";
+
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 0); cout << "----------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 1); cout << "|    HOW TO PLAY     |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 2); cout << "----------------------";
+
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 3); cout << "----------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 4); cout << "|        EXIT        |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 5); cout << "----------------------";
+			}
+
+			key = inputKey();
+			if (key == 80)
+			{
+				select = 2;
+			}
+			else if (key == 72)
+			{
+				select = 4;
+			}
+			else if (key == 13)
+				break;
+		}
+		while (select == 2)
+		{
+			setTextColor(RED_COLOR);
+			{
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 3); cout << "----------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 2); cout << "|      CONTINUE      |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 1); cout << "----------------------";
+			}
+			setTextColor(WHITE_COLOR);
+			{
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 0); cout << "----------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 1); cout << "|    HOW TO PLAY     |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 2); cout << "----------------------";
+
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 3); cout << "----------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 4); cout << "|        EXIT        |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 5); cout << "----------------------";
+
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 6); cout << "----------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 5); cout << "|      NEW GAME      |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 4); cout << "----------------------";
+			}
+
+			key = inputKey();
+			if (key == 80)
+			{
+				select = 3;
+			}
+			else if (key == 72)
+			{
+				select = 1;
+			}
+			else if (key == 13)
+				break;
+		}
+		while (select == 3)
+		{
+			setTextColor(RED_COLOR);
+			{
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 0); cout << "----------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 1); cout << "|    HOW TO PLAY     |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 2); cout << "----------------------";
+			}
+			setTextColor(WHITE_COLOR);
+			{
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 3); cout << "----------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 4); cout << "|        EXIT        |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 5); cout << "----------------------";
+
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 6); cout << "----------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 5); cout << "|      NEW GAME      |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 4); cout << "----------------------";
+
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 3); cout << "----------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 2); cout << "|      CONTINUE      |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 1); cout << "----------------------";
+			}
+
+			key = inputKey();
+			if (key == 80)
+			{
+				select = 4;
+			}
+			else if (key == 72)
+			{
+				select = 2;
+			}
+			else if (key == 13)
+				break;
+		}
+		while (select == 4)
+		{
+			setTextColor(RED_COLOR);
+			{
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 3); cout << "----------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 4); cout << "|        EXIT        |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 5); cout << "----------------------";
+			}
+			setTextColor(WHITE_COLOR);
+			{
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 6); cout << "----------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 5); cout << "|      NEW GAME      |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 4); cout << "----------------------";
+
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 3); cout << "----------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 2); cout << "|      CONTINUE      |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 1); cout << "----------------------";
+
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 0); cout << "----------------------";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 1); cout << "|    HOW TO PLAY     |";
+				gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 + 2); cout << "----------------------";
+			}
+
+			key = inputKey();
+			if (key == 80)
+			{
+				select = 1;
+			}
+			else if (key == 72)
+			{
+				select = 3;
+			}
+			else if (key == 13)
+				break;
+		}
+	}
+	return select;
+
+}
+
+//Hàm tạm dùng game
+int resumeGame()
+{
+	clrscr();
+	setWindowGame();
+	showNameGame();
+	int select = 1;
+	int key = inputKey();
+	gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 15, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 7); cout << "------------------------------------";
+	gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 15, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 6); cout << "|              RESUME              |";
+	gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 15, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 5); cout << "------------------------------------";
+	gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 15, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 4); cout << "|                                  |";
+	gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 15, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 3); cout << "------------------------------------";
+	while (key != 13)
+	{
+
+		while (select == 2)
+		{
+			gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 8, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 4); cout << "YES";
+			setTextColor(RED_COLOR);
+			gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 8, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 4); cout << "YES";
+			setTextColor(WHITE_COLOR);
+			gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 + 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 4); cout << "NO";
+			key = inputKey();
+			if (key == 77 || key == 75)
+			{
+				select = 1;
+				break;
+			}
+			else if (key == 13)
+				break;
+		}
+		while (select == 1)
+		{
+			gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 8, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 4); cout << "YES";
+			setTextColor(RED_COLOR);
+			gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 + 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 4); cout << "NO";
+			setTextColor(WHITE_COLOR);
+			gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 + 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 4);
+			key = inputKey();
+			if (key == 77 || key == 75)
+			{
+				select = 2;
+				break;
+			}
+			else if (key == 13)
+				break;
+		}
+	}
+	return select;
+}
+
+//Hàm lưu game
+void saveGame()
+{
+	clrscr();
+	setWindowGame();
+	showNameGame();
+	int select = 1;
+	int key = inputKey();
+	gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 15, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 3); cout << "------------------------------------";
+	gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 15, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 2); cout << "|       DO YOU WANT TO SAVE?       |";
+	gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 15, (WINDOW_BOTTOM + WINDOW_TOP) / 2 - 1); cout << "------------------------------------";
+
+	while (key != 13)
+	{
+
+		while (select == 1)
+		{
+			gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 5, (WINDOW_BOTTOM + WINDOW_TOP) / 2); cout << "YES";
+			setTextColor(RED_COLOR);
+			gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 5, (WINDOW_BOTTOM + WINDOW_TOP) / 2); cout << "YES";
+			setTextColor(WHITE_COLOR);
+			gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 + 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2); cout << "NO";
+			key = inputKey();
+			if (key == 77 || key == 75)
+			{
+				select = 2;
+				break;
+			}
+			else if (key == 13)
+				break;
+		}
+		while (select == 2)
+		{
+			gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 - 5, (WINDOW_BOTTOM + WINDOW_TOP) / 2); cout << "YES";
+			setTextColor(RED_COLOR);
+			gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 + 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2); cout << "NO";
+			setTextColor(WHITE_COLOR);
+			gotoXY((WINDOW_RIGHT + WINDOW_LEFT) / 2 + 10, (WINDOW_BOTTOM + WINDOW_TOP) / 2); cout << "NO";
+			key = inputKey();
+			if (key == 77 || key == 75)
+			{
+				select = 1;
+				break;
+			}
+			else if (key == 13)
+				break;
+		}
+	}
+	if (select == 1)
+	{
+		ofstream outFile;
+		outFile.open("save.txt");
+
+		outFile << player << endl;
+		outFile << score << endl;
+		outFile << level << endl;
+		outFile << speed << endl;
+
+		switch (direction)
+		{
+		case RIGHT:
+			outFile << 0 << endl;
+			break;
+		case LEFT:
+			outFile << 1 << endl;
+			break;
+		case UP:
+			outFile << 2 << endl;
+			break;
+		case DOWN:
+			outFile << 3 << endl;
+		}
+
+		outFile << int(ran.snakeType) << endl;
+		outFile << int(ran.length) << endl;
+		for (int i = 0; i < ran.length; i++)
+		{
+			outFile << ran.snake[i].x << " " << ran.snake[i].y << endl;
+		}
+		outFile << food.x << " " << food.y << endl;
+		outFile.close();
+	}
+
+}
+
+//Hàm xóa đi phần game đã lưu
+void deleteSaveGame()
+{
+	int result = remove("save.txt");
+}
+
+//Hàm tiếp tục game
+bool continueGame()
+{
+	ifstream inFile;
+	inFile.open("save.txt");
+	if (!inFile)
+		return false;
+	inFile >> player;
+	inFile >> score;
+	inFile >> level;
+	inFile >> speed;
+	int d;
+	inFile >> d;
+	switch (d)
+	{
+	case 0:
+		direction = RIGHT;
+		break;
+	case 1:
+		direction = LEFT;
+		break;
+	case 2:
+		direction = UP;
+		break;
+	case 3:
+		direction = DOWN;
+	}
+
+	inFile >> d;
+	ran.snakeType = char(d);
+	inFile >> ran.length;
+	for (int i = 0; i < ran.length; i++)
+	{
+		inFile >> ran.snake[i].x >> ran.snake[i].y;
+	}
+	inFile >> food.x >> food.y;
+	inFile.close();
+	return true;
+
+}
+
+
+//Hàm hiển thị hướng dẫn
 void howToPlay()
 {
 	clrscr();
@@ -408,7 +1065,7 @@ void howToPlay()
 		key = inputKey();
 	}
 }
-//Hàm kiểm tra thắng-----Quang
+
 bool checkWinGame()
 {
 	if (score == 100)
@@ -416,7 +1073,7 @@ bool checkWinGame()
 	else
 		return false;
 }
-//Hàm Hiển thị thắng trong game-----Quang
+
 void winGame()
 {
 	clrscr();
@@ -482,8 +1139,180 @@ void winGame()
 	}
 	clrscr();
 }
-
 int main()
 {
+	noCursorType();
+	//Thiết lập màn hình
 
+	SetWindowSize(80, 35);
+	DisableResizeWindow();
+	ShowScrollbar(false);
+	showNameGame();
+	setWindowGame();
+	getHighScore();
+	creatFood();
+	bool statut = false;
+	int choose = menuGame();
+
+
+	while (choose != 4)
+	{
+		clrscr();
+		showNameGame();
+		setWindowGame();
+		statut = false;
+
+		switch (choose)
+		{
+		case 1:
+		{
+			deleteSaveGame();
+			restartGame();
+			inputPlayer();
+			clrscr();
+			showNameGame();
+			setWindowGame();
+			setTypeSnake();
+			clrscr();
+			setWindowGame();
+			drawFood();
+			showScore();
+			showLevel();
+			while (!statut)
+			{
+				Point lastSnake = ran.directionSnake(direction);
+				statut = checkGame();
+				if (!statut)
+				{
+					eatFood();
+					showPlayer();
+					showScore();
+					showLevel();
+					ran.drawSnake(lastSnake);
+				}
+				ran.getEvent(direction);
+				Sleep(300 / speed);
+				if (checkWinGame())
+				{
+					winGame();
+					choose = menuGame();
+					break;
+				}
+				int key = inputKey();
+				if (key == 13)
+				{
+					int select = resumeGame();
+					if (select == 1)
+					{
+						saveGame();
+						clrscr();
+						setWindowGame();
+						showNameGame();
+						choose = menuGame();
+						break;
+					}
+					else
+					{
+						clrscr();
+						setWindowGame();
+						drawFood();
+					}
+				}
+			}
+
+			break;
+		}
+		case 2:
+			if (continueGame())
+			{
+				clrscr();
+				setWindowGame();
+				drawFood();
+				showScore();
+				showLevel();
+				while (!statut)
+				{
+					Point lastSnake = ran.directionSnake(direction);
+					statut = checkGame();
+					if (!statut)
+					{
+						eatFood();
+						showPlayer();
+						showScore();
+						showLevel();
+						ran.drawSnake(lastSnake);
+					}
+					ran.getEvent(direction);
+					Sleep(300 / speed);
+					if (checkWinGame())
+					{
+						winGame();
+						choose = menuGame();
+						break;
+					}
+					int key = inputKey();
+					if (key == 13)
+					{
+						int select = resumeGame();
+						if (select == 1)
+						{
+							saveGame();
+							clrscr();
+							setWindowGame();
+							showNameGame();
+							choose = menuGame();
+							break;
+						}
+						else
+						{
+							clrscr();
+							setWindowGame();
+						}
+					}
+				}
+				break;
+			}
+			else
+			{
+				clrscr();
+				setWindowGame();
+				showNameGame();
+				gotoXY(25, 17); cout << "------------------------------------";
+				gotoXY(25, 18); cout << "|        NO SAVE FOUND!!!!         |";
+				gotoXY(25, 19); cout << "|      PLEASE CHOOSE NEW GAME      |";
+				gotoXY(25, 20); cout << "------------------------------------";
+				Sleep(1000);
+				clrscr();
+				setWindowGame();
+				showNameGame();
+				choose = menuGame();
+			}
+			break;
+		case 3:
+			howToPlay();
+			clrscr();
+			setWindowGame();
+			showNameGame();
+			choose = menuGame();
+			break;
+		}
+		if (statut)
+		{
+			clrscr();
+			setWindowGame();
+			showNameGame();
+			gameOver();
+			restartGame();
+			setWindowGame();
+			showNameGame();
+			choose = menuGame();
+			clrscr();
+			setWindowGame();
+			showNameGame();
+		}
+
+	}
+
+
+	return 0;
 }
