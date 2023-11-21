@@ -4,16 +4,13 @@
 // Trả về: Mã của phím
 int inputKey()
 {
+	char key_press;
+	int ascii_value;
 	if (_kbhit())
 	{
-		int key = _getch();
-
-		if (key == 224)
-		{
-			key = _getch();
-			return key + 1000;
-		}
-		return key;
+		key_press = _getch();
+		ascii_value = key_press;
+		return ascii_value;
 	}
 	else
 	{
